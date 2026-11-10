@@ -4,6 +4,7 @@ Homebrew formulas for my command-line tools.
 
 ```sh
 brew install jmcgarr/tap/git-grab
+brew install jmcgarr/tap/dirty
 ```
 
 Homebrew asks you to trust a third-party tap the first time you install
@@ -16,6 +17,7 @@ brew trust jmcgarr/tap
 | Formula | What it does |
 |---|---|
 | [git-grab](https://github.com/jmcgarr/git-grab) | `git grab <url>` clones into `~/Projects/<domain>/<owner>/<repo>` |
+| [dirty](https://github.com/jmcgarr/dirty) | `dirty` lists git checkouts under `~/Projects` with uncommitted changes, untracked files, or no remote (Apple silicon and Linux x86_64 only) |
 
 Formulas download prebuilt binaries from each tool's GitHub release, so
 installs take seconds and need no compiler. Homebrew downloads carry no
