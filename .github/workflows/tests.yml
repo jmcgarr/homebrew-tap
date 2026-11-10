@@ -18,12 +18,14 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
-      - uses: Homebrew/actions/setup-homebrew@master
+      - uses: Homebrew/actions/setup-homebrew@main
         if: runner.os == 'Linux'
         with:
           test-bot: false
       - name: Tap this checkout
-        run: brew tap jmcgarr/tap "$GITHUB_WORKSPACE" || true
+        run: |
+          brew tap jmcgarr/tap "$GITHUB_WORKSPACE" || true
+          brew trust jmcgarr/tap
       - name: Style and audit
         run: |
           brew style jmcgarr/tap

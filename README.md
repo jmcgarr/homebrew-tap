@@ -6,6 +6,13 @@ Homebrew formulas for my command-line tools.
 brew install jmcgarr/tap/git-grab
 ```
 
+Homebrew asks you to trust a third-party tap the first time you install
+from it. To answer once for every formula here:
+
+```
+brew trust jmcgarr/tap
+```
+
 | Formula | What it does |
 |---|---|
 | [git-grab](https://github.com/jmcgarr/git-grab) | `git grab <url>` clones into `~/Projects/<domain>/<owner>/<repo>` |
@@ -38,8 +45,9 @@ bin/update-formula git-grab 0.6
    `SHA256SUMS` file. The tool must have a license.
 2. Copy `Formula/git-grab.rb`, change the class name, `desc`, `homepage`,
    `license`, the asset names in each `url`, the `install` glob, and the
-   `test` block. Keep `#{version}` in the URLs; the update script substitutes
-   it. Use `v#{version}` if the tool's tags start with `v`.
+   `test` block. Write the real release tag into each `url`; Homebrew reads
+   the version from it, and the update script swaps the tag on each bump.
+   There is no `version` line.
 3. Run `bin/update-formula <name> <tag>` to fill in the checksums, then
    `brew install --verbose jmcgarr/tap/<name>` and `brew test jmcgarr/tap/<name>`.
 4. Add the `gh workflow run` step to the tool's release workflow and the

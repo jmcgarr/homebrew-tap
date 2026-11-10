@@ -32,6 +32,7 @@ jobs:
       - name: Install and test the new formula
         run: |
           brew tap jmcgarr/tap "$GITHUB_WORKSPACE" || true
+          brew trust jmcgarr/tap
           brew install --verbose "jmcgarr/tap/${{ inputs.formula }}"
           brew test --verbose "jmcgarr/tap/${{ inputs.formula }}"
       - name: Commit
