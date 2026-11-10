@@ -2,14 +2,14 @@
 
 Homebrew formulas for my command-line tools.
 
-```
+```sh
 brew install jmcgarr/tap/git-grab
 ```
 
 Homebrew asks you to trust a third-party tap the first time you install
 from it. To answer once for every formula here:
 
-```
+```sh
 brew trust jmcgarr/tap
 ```
 
@@ -25,7 +25,7 @@ macOS quarantine flag, so there is nothing to approve in System Settings.
 
 Each tool's release workflow finishes by running
 
-```
+```sh
 gh workflow run update-formula.yml -R jmcgarr/homebrew-tap -f formula=<name> -f tag=<tag>
 ```
 
@@ -35,7 +35,7 @@ release's `SHA256SUMS`, installs and tests the result, and commits to
 `main`. The same workflow can be run by hand from the Actions tab, and the
 script runs locally too:
 
-```
+```sh
 bin/update-formula git-grab 0.6
 ```
 
