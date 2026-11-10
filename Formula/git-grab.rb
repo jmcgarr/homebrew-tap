@@ -10,23 +10,23 @@ class GitGrab < Formula
 
   on_macos do
     on_arm do
-      url "https://github.com/jmcgarr/git-grab/releases/download/0.5/git-grab-darwin-arm64"
-      sha256 "ba6c048ce5b819a47cd8d3a39f8d58da7ce91b45581eb7fc6b78649ea6655420"
+      url "https://github.com/jmcgarr/git-grab/releases/download/0.6/git-grab-darwin-arm64"
+      sha256 "24135d53779d07f8d7bec5a55ab5a2d7775dba25c53a93b24140ea5357d1073b"
     end
     on_intel do
-      url "https://github.com/jmcgarr/git-grab/releases/download/0.5/git-grab-darwin-amd64"
-      sha256 "693479c3346a0211c925f092f1b97e4a6884494af1767889f85fc5df9cc67220"
+      url "https://github.com/jmcgarr/git-grab/releases/download/0.6/git-grab-darwin-amd64"
+      sha256 "e9bc2d087cbfecfc09b889f21ca253bae772a312308e9ab00eccf0e2eec6cc7d"
     end
   end
 
   on_linux do
     on_arm do
-      url "https://github.com/jmcgarr/git-grab/releases/download/0.5/git-grab-linux-arm64"
-      sha256 "8e8bc6cd0ed683674d79ab5d661e9ad560136b93426523dc40c1bbdacda3153b"
+      url "https://github.com/jmcgarr/git-grab/releases/download/0.6/git-grab-linux-arm64"
+      sha256 "7f5df1d88aa8eaf4b5201bc618ec1c9b39e809bbf840ad17d3fd40f0c2f85929"
     end
     on_intel do
-      url "https://github.com/jmcgarr/git-grab/releases/download/0.5/git-grab-linux-amd64"
-      sha256 "187de0eee7ec889cfae731ef22a3de4a5040e59ece80f9f1fd606f2d121988f8"
+      url "https://github.com/jmcgarr/git-grab/releases/download/0.6/git-grab-linux-amd64"
+      sha256 "076efbecc1573b42c60cde79e7b91b43c8fbe9c08a6a6e508c8cb3f1b3786165"
     end
   end
 
