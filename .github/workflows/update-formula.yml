@@ -29,12 +29,16 @@ jobs:
         run: bin/update-formula "${{ inputs.formula }}" "${{ inputs.tag }}"
         env:
           GH_TOKEN: ${{ github.token }}
-      - name: Install and test the new formula
+      - name: Install, test, and audit the new formula
         run: |
           brew tap jmcgarr/tap "$GITHUB_WORKSPACE" || true
           brew trust jmcgarr/tap
+          # brew tap clones the committed HEAD, so copy the rewritten,
+          # uncommitted formula over it before testing.
+          cp "Formula/${{ inputs.formula }}.rb" "$(brew --repository jmcgarr/tap)/Formula/"
           brew install --verbose "jmcgarr/tap/${{ inputs.formula }}"
           brew test --verbose "jmcgarr/tap/${{ inputs.formula }}"
+          brew audit --strict --online "jmcgarr/tap/${{ inputs.formula }}"
       - name: Commit
         run: |
           version="${{ inputs.tag }}"
