@@ -1,0 +1,39 @@
+name: Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+env:
+  HOMEBREW_NO_AUTO_UPDATE: 1
+  HOMEBREW_NO_INSTALL_CLEANUP: 1
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: Homebrew/actions/setup-homebrew@master
+        if: runner.os == 'Linux'
+        with:
+          test-bot: false
+      - name: Tap this checkout
+        run: brew tap jmcgarr/tap "$GITHUB_WORKSPACE" || true
+      - name: Style and audit
+        run: |
+          brew style jmcgarr/tap
+          for f in Formula/*.rb; do
+            brew audit --strict --online "jmcgarr/tap/$(basename "$f" .rb)"
+          done
+      - name: Install and test
+        run: |
+          for f in Formula/*.rb; do
+            name=$(basename "$f" .rb)
+            brew install --verbose "jmcgarr/tap/$name"
+            brew test --verbose "jmcgarr/tap/$name"
+          done

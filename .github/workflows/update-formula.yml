@@ -1,0 +1,46 @@
+name: Update formula
+
+# Run by hand from the Actions tab, or by a tool's release workflow:
+#   gh workflow run update-formula.yml -R jmcgarr/homebrew-tap -f formula=git-grab -f tag=0.6
+
+on:
+  workflow_dispatch:
+    inputs:
+      formula:
+        description: Formula name, e.g. git-grab
+        required: true
+      tag:
+        description: Release tag, e.g. 0.6 or v0.1.0
+        required: true
+
+permissions:
+  contents: write
+
+env:
+  HOMEBREW_NO_AUTO_UPDATE: 1
+  HOMEBREW_NO_INSTALL_CLEANUP: 1
+
+jobs:
+  update:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Rewrite formula
+        run: bin/update-formula "${{ inputs.formula }}" "${{ inputs.tag }}"
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - name: Install and test the new formula
+        run: |
+          brew tap jmcgarr/tap "$GITHUB_WORKSPACE" || true
+          brew install --verbose "jmcgarr/tap/${{ inputs.formula }}"
+          brew test --verbose "jmcgarr/tap/${{ inputs.formula }}"
+      - name: Commit
+        run: |
+          version="${{ inputs.tag }}"
+          version="${version#v}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add Formula
+          git diff --cached --quiet && { echo "already at $version"; exit 0; }
+          git commit -m "${{ inputs.formula }} $version"
+          git push

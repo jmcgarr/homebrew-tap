@@ -1,0 +1,68 @@
+#!/usr/bin/env bash
+# Bump one formula to a release tag.
+#
+#   bin/update-formula <formula> <tag>
+#   bin/update-formula git-grab 0.6
+#   bin/update-formula dirty v0.1.0
+#
+# Rewrites the version line and every sha256 in Formula/<formula>.rb from the
+# release's SHA256SUMS asset, downloading individual assets to hash them when
+# the release has no SHA256SUMS. Asset names come from the url lines in the
+# formula itself, so each tool may use its own naming. Runs brew style (and
+# brew audit when run from the tapped checkout). Does not commit.
+set -euo pipefail
+
+if [ $# -ne 2 ]; then
+  sed -n '2,12p' "$0" >&2
+  exit 2
+fi
+
+formula=$1
+tag=$2
+version=${tag#v}
+here=$(cd "$(dirname "$0")/.." && pwd)
+file="$here/Formula/$formula.rb"
+
+[ -f "$file" ] || { echo "no such formula: $file" >&2; exit 1; }
+
+repo=$(sed -n 's|^ *homepage "https://github.com/\([^"]*\)".*|\1|p' "$file")
+[ -n "$repo" ] || { echo "cannot read GitHub repo from homepage line in $file" >&2; exit 1; }
+
+tmp=$(mktemp -d)
+trap 'rm -rf "$tmp"' EXIT
+
+gh release view "$tag" -R "$repo" >/dev/null || { echo "no release $tag in $repo" >&2; exit 1; }
+gh release download "$tag" -R "$repo" -p SHA256SUMS -D "$tmp" 2>/dev/null || true
+touch "$tmp/SHA256SUMS"
+
+# One "name sha" line per asset the formula references.
+: > "$tmp/sums"
+while IFS= read -r template; do
+  url=${template//\#\{version\}/$version}
+  name=$(basename "$url")
+  sha=$(awk -v n="$name" '$2 == n { print $1 }' "$tmp/SHA256SUMS")
+  if [ -z "$sha" ]; then
+    echo "hashing $name (not in SHA256SUMS)" >&2
+    curl -fsSL "$url" -o "$tmp/$name" || { echo "asset not found: $url" >&2; exit 1; }
+    sha=$(shasum -a 256 "$tmp/$name" | cut -d' ' -f1)
+  fi
+  echo "$name $sha" >> "$tmp/sums"
+done < <(sed -n 's/^ *url "\([^"]*\)".*/\1/p' "$file")
+
+awk -v version="$version" -v sums="$tmp/sums" '
+  BEGIN { while ((getline line < sums) > 0) { split(line, f, " "); sha[f[1]] = f[2] } }
+  /^ *version "/ { sub(/"[^"]*"/, "\"" version "\"") }
+  /^ *url "/ {
+    u = $0; sub(/^ *url "/, "", u); sub(/".*$/, "", u)
+    gsub(/#\{version\}/, version, u)
+    n = split(u, parts, "/"); pending = parts[n]
+  }
+  /^ *sha256 "/ && pending != "" { sub(/"[^"]*"/, "\"" sha[pending] "\""); pending = "" }
+  { print }
+' "$file" > "$tmp/new.rb"
+
+mv "$tmp/new.rb" "$file"
+echo "updated $file to $version"
+
+brew style "$file"
+brew audit --strict --online --formula "$file"
