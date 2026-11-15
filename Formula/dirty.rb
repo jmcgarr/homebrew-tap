@@ -10,15 +10,15 @@ class Dirty < Formula
 
   on_macos do
     on_arm do
-      url "https://github.com/jmcgarr/dirty/releases/download/v0.1.0/dirty-macos-aarch64"
-      sha256 "38c29bc7cf90112091c997913368554402d2ab1aef1cd509fb350d5339b5130b"
+      url "https://github.com/jmcgarr/dirty/releases/download/v0.2.0/dirty-macos-aarch64"
+      sha256 "98c959c1a9761b44e8162706152e428f9520044db980eec6738f71edabc17a40"
     end
   end
 
   on_linux do
     on_intel do
-      url "https://github.com/jmcgarr/dirty/releases/download/v0.1.0/dirty-linux-x86_64"
-      sha256 "ae83e67a7b323ab68f7126a1d8dc7e4a9342dd498902e1a30591772c243c8b35"
+      url "https://github.com/jmcgarr/dirty/releases/download/v0.2.0/dirty-linux-x86_64"
+      sha256 "08b28bf3e7b6f57a9f9cc290ec5a0a8c4d3fe9f6475efd5bf86632477a40b77e"
     end
   end
 
